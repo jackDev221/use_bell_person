@@ -83,7 +83,7 @@ impl<Scalar: PrimeField> Circuit<Scalar> for MyCircuit {
     }
 }
 
-pub fn gen_and_vk_proof(preimage: [u8; 160]) {
+pub fn gen_and_vk_proof(preimage: [u8; 160])->Vec<u8> {
     let now = Instant::now();
     let params = {
         let c = MyCircuit {
@@ -98,6 +98,7 @@ pub fn gen_and_vk_proof(preimage: [u8; 160]) {
     // let preimage = [42; 160];
     let hash = Sha256::digest(&Sha256::digest(&preimage));
     println!("{:?}", hash.to_vec());
+    let res = hash.clone().to_vec();
 
     // Create an instance of our circuit (with the preimage as a witness).
     let c = MyCircuit {
@@ -117,6 +118,7 @@ pub fn gen_and_vk_proof(preimage: [u8; 160]) {
              now.elapsed().as_secs(),
              now.elapsed().subsec_millis()
     );
+    return res;
 }
 
 

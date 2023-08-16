@@ -14,24 +14,33 @@ impl Prover {
     pub fn create_proof<C: Circuit<Bn256>, >(&mut self, input: &Vec<u8>) -> Result<Proof<Bn256, C>, io::Error> {
         println!("create_proof:{:?} ", input);
 
-        let mut data = vec![];
-        let mut rng = thread_rng();
-        data.extend_from_slice(input);
-        while data.len() < 160 {
-            let rand_bytes: [u8; 32] = rng.gen();
-            if data.len() + 32 < 160 {
-                data.extend_from_slice(rand_bytes.as_slice());
-            } else {
-                let lasts = rand_bytes[0..(160 - data.len())].to_vec();
-                data.extend_from_slice(lasts.as_slice());
+
+        // rand
+        // let preimage = [42; 160];
+        let mut times = 0;
+        loop {
+            times += 1;
+            let mut data = vec![];
+            let mut rng = thread_rng();
+            data.extend_from_slice(input);
+            while data.len() < 160 {
+                let rand_bytes: [u8; 32] = rng.gen();
+                if data.len() + 32 < 160 {
+                    data.extend_from_slice(rand_bytes.as_slice());
+                } else {
+                    let lasts = rand_bytes[0..(160 - data.len())].to_vec();
+                    data.extend_from_slice(lasts.as_slice());
+                }
+            }
+
+            println!("data:{}:{:?}", data.len(), data);
+            let preiamge: [u8; 160] = data.as_slice().try_into().expect("ddd");
+            let hash = gen_and_vk_proof(preiamge);
+            if ( hash[0] == 0 && hash[1] == 0 && hash[2] == 0 ) || times > 60{
+                break;
             }
         }
 
-        println!("data:{}:{:?}", data.len(), data);
-        // rand
-        // let preimage = [42; 160];
-        let ass: [u8; 160] = data.as_slice().try_into().expect("ddd");
-        gen_and_vk_proof(ass);
         Ok(Proof::empty())
     }
 }
