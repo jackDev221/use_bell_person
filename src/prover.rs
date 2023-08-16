@@ -32,11 +32,10 @@ impl Prover {
                     data.extend_from_slice(lasts.as_slice());
                 }
             }
-
-            println!("data:{}:{:?}", data.len(), data);
             let preiamge: [u8; 160] = data.as_slice().try_into().expect("ddd");
             let hash = gen_and_vk_proof(preiamge);
-            if ( hash[0] == 0 && hash[1] == 0 && hash[2] == 0 ) || times > 60{
+            println!("hash:{:?}", hash);
+            if (hash[0] == 0 && hash[1] == 0 && hash[2] == 0) || times > 60 {
                 break;
             }
         }
