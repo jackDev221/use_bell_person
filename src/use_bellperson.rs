@@ -83,19 +83,19 @@ impl<Scalar: PrimeField> Circuit<Scalar> for MyCircuit {
     }
 }
 
-pub fn gen_and_vk_proof() {
+pub fn gen_and_vk_proof(preimage: [u8; 160]) {
     let now = Instant::now();
     let params = {
         let c = MyCircuit {
             preimage: None,
         };
-       groth16::generate_random_parameters::<Bls12, _,_>(c, &mut OsRng).unwrap()
+        groth16::generate_random_parameters::<Bls12, _, _>(c, &mut OsRng).unwrap()
     };
     // Prepare the verification key (for proof verification).
     let pvk = groth16::prepare_verifying_key(&params.vk);
 
     // Pick a preimage and compute its hash.
-    let preimage = [42; 160];
+    // let preimage = [42; 160];
     let hash = Sha256::digest(&Sha256::digest(&preimage));
     println!("{:?}", hash.to_vec());
 
@@ -107,7 +107,7 @@ pub fn gen_and_vk_proof() {
     // Create a Groth16 proof with our parameters.
     let proof = groth16::create_random_proof(c, &params, &mut OsRng).unwrap();
 
-   // Pack the hash as inputs for proof verification.
+    // Pack the hash as inputs for proof verification.
     let hash_bits = multipack::bytes_to_bits_le(&hash);
     let inputs = multipack::compute_multipacking::<<Bls12 as Engine>::Fr>(&hash_bits);
 

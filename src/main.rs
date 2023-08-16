@@ -31,6 +31,8 @@ pub fn serialize_job<W: Write>(
 ) {
     buffer.write_all(&job_id.to_le_bytes()).unwrap();
     buffer.write_all(&batch_number.to_le_bytes()).unwrap();
+    let address = hex::decode("b933a7d3ce9dade7e138abcc7c08ceeaf78e99a2").unwrap();
+    buffer.write_all(address.as_slice()).unwrap();
 }
 
 pub type SharedAssemblyQueue = Arc<Mutex<Buffer<Vec<u8>>>>;
@@ -305,6 +307,8 @@ fn send_assembly(
 
 #[tokio::main]
 async fn main() {
+    let args: Vec<String> = std::env::args().collect();
+    let number = args[1].parse::<u32>().unwrap();
     let (sender, mut receiver) = watch::channel("input".to_string()) ;
     let assembly_queue = Buffer::new(4);
     let shared_assembly_queue = Arc::new(Mutex::new(assembly_queue));
@@ -332,7 +336,7 @@ async fn main() {
         println!("into send");
         let socket = SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 8777);
         let mut input: Vec<u8> = vec![];
-        serialize_job(12, 15, &mut input);
+        serialize_job(12, number, &mut input);
         tokio::time::sleep(Duration::from_secs(3)).await;
         println!("start send:{:?}",input);
         let res = send_assembly(

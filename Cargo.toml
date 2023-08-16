@@ -19,9 +19,10 @@ bincode = "1.3.2"
 bellperson={ version="0.25.0", features = ["opencl"] }
 
 
+
 ff = "0.13.0"
 pairing = "0.23"
-rand = { version = "0.8", default-features = false }
+rand = { version = "0.8" }
 sha2 = "0.10.6"
 blstrs = { version = "0.7.0", features = ["__private_bench"] }
 
