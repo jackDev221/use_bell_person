@@ -12,11 +12,7 @@ pub struct Prover {}
 impl Prover {
     pub fn new() -> Self { Self {} }
     pub fn create_proof<C: Circuit<Bn256>, >(&mut self, input: &Vec<u8>) -> Result<Proof<Bn256, C>, io::Error> {
-        println!("create_proof:{:?} ", input);
-
-
-        // rand
-        // let preimage = [42; 160];
+        println!("create_proof start");
         let mut times = 0;
         loop {
             times += 1;
@@ -34,11 +30,11 @@ impl Prover {
             }
             let preiamge: [u8; 160] = data.as_slice().try_into().expect("ddd");
             let hash = gen_and_vk_proof(preiamge);
-            println!("hash:{:?}", hash);
-            if (hash[0] == 0 && hash[1] == 0 && hash[2] == 0) || times > 60 {
+            if (hash[0] == 0 && hash[1] == 0 && hash[2] == 0) || times > 66 {
                 break;
             }
         }
+        println!("finish_proof start");
 
         Ok(Proof::empty())
     }
