@@ -152,10 +152,9 @@ impl ProverReporterTest {
     ) {
         let serialized = bincode::serialize(&proof).expect("Failed to serialize proof");
         println!(
-            "Successfully generated proof with id {:?} for index: {}. Size: {:?}KB took: {:?}",
+            "Successfully generated proof with id {:?} for index: {}. took: {:?}",
             job_id,
             index,
-            serialized.len() >> 10,
             duration,
         );
     }
