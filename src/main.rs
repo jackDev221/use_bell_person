@@ -309,7 +309,7 @@ fn send_assembly(
 async fn main() {
     let args: Vec<String> = std::env::args().collect();
     let number = args[1].parse::<u32>().unwrap();
-    let (sender, mut receiver) = watch::channel("input".to_string()) ;
+    let (sender, mut receiver) = watch::channel("input".to_string());
     let assembly_queue = Buffer::new(4);
     let shared_assembly_queue = Arc::new(Mutex::new(assembly_queue));
     let producer = shared_assembly_queue.clone();
@@ -331,14 +331,14 @@ async fn main() {
             reporter,
         );
     });
-
+    let id = number.clone() as usize;
     tokio::spawn(async move {
         println!("into send");
         let socket = SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 8777);
         let mut input: Vec<u8> = vec![];
-        serialize_job(12, number, &mut input);
+        serialize_job(id, number, &mut input);
         tokio::time::sleep(Duration::from_secs(3)).await;
-        println!("start send:{:?}",input);
+        println!("start send:{:?}", input);
         let res = send_assembly(
             0,
             &mut input,

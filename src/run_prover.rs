@@ -170,7 +170,7 @@ fn create_proof(
 
     let (prover_idx, mut prover) = prover;
     let proof_generated = std::time::Instant::now();
-    let report = match prover.create_proof(&input.1) {
+    let report = match prover.create_proof(input.0.clone(), &input.1) {
         Ok(proof) => {
             println!("Finish create proof for id :{}", job_id);
             let proof_generated = proof_generated.elapsed();
