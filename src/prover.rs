@@ -11,15 +11,15 @@ pub struct Prover {}
 
 impl Prover {
     pub fn new() -> Self { Self {} }
-    pub fn create_proof<C: Circuit<Bn256>, >(&mut self, times: usize, input: &Vec<u8>) -> Result<Proof<Bn256, C>, io::Error> {
-        println!("create_proof start, hash times: {} ", times);
+    pub fn create_proof<C: Circuit<Bn256>, >(&mut self, number_hash: usize, input: &Vec<u8>) -> Result<Proof<Bn256, C>, io::Error> {
+        println!("create_proof start: hash times: {}", number_hash);
         let mut times = 0;
         loop {
             times += 1;
             let mut data = vec![];
             let mut rng = thread_rng();
             data.extend_from_slice(input);
-            while data.len() < times {
+            while data.len() < 160 {
                 let rand_bytes: [u8; 32] = rng.gen();
                 if data.len() + 32 < 160 {
                     data.extend_from_slice(rand_bytes.as_slice());
@@ -30,7 +30,7 @@ impl Prover {
             }
             let preiamge: [u8; 160] = data.as_slice().try_into().expect("ddd");
             let hash = gen_and_vk_proof(preiamge);
-            if (hash[0] == 0 && hash[1] == 0 && hash[2] == 0) || times > 66 {
+            if (hash[0] == 0 && hash[1] == 0 && hash[2] == 0) || times > number_hash {
                 break;
             }
         }
